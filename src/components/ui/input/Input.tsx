@@ -21,6 +21,7 @@ interface FormFieldProps extends Omit<BaseProps, "type"> {
     | "checkbox"
     | "radio"
     | "date"
+    | "password"
     | "time"
     | "datetime";
   options?: SelectOption[];
@@ -151,7 +152,10 @@ const Input: React.FC<FormFieldProps> = ({
             peer-focus-visible:ring-primary/30
           "
         >
-          <Check size={14} className="text-white opacity-0 peer-checked:opacity-100" />
+          <Check
+            size={14}
+            className="text-white opacity-0 peer-checked:opacity-100"
+          />
         </span>
 
         <span className="text-sm text-foreground">{label}</span>

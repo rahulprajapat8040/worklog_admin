@@ -11,3 +11,8 @@ export interface IPageInfo {
   totalPage: number;
   limit: number;
 }
+
+export interface IOption {
+  value: string;
+  label: string;
+}

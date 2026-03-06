@@ -1,7 +1,9 @@
 "use client";
+import { addTaskAction } from "@/app/actions/task/addTask.action";
 import ErrorMessage from "@/components/common/ErrorMessage";
 import Button from "@/components/ui/button/Button";
 import Input from "@/components/ui/input/Input";
+import { useToast } from "@/components/ui/toast/ToastContext";
 import { ICategory } from "@/lib/interfaces/ApiResponses/category.interface";
 import { IAddTaskForm } from "@/lib/interfaces/forms/IAddTaskForm.interface";
 import { TaskStatus, Visiblity } from "@/utils/enum";
@@ -18,6 +20,7 @@ interface TaskProp {
   taskStatus: Option[];
 }
 const TaskForm: React.FC<TaskProp> = ({ categories, taskStatus }) => {
+  const toast = useToast();
   const [isPending, startTransition] = useTransition();
   const {
     register,
@@ -27,7 +30,7 @@ const TaskForm: React.FC<TaskProp> = ({ categories, taskStatus }) => {
     formState: { errors },
   } = useForm<IAddTaskForm>({
     defaultValues: {
-      date: "",
+      date: new Date().toISOString().split("T")[0],
       title: "",
       timeTaken: "",
       categoryId: "",
@@ -39,7 +42,17 @@ const TaskForm: React.FC<TaskProp> = ({ categories, taskStatus }) => {
 
   const onSubmit = (data: IAddTaskForm) => {
     startTransition(async () => {
-      console.log("data is", data);
+      const res = await addTaskAction(data);
+
+      if (!res?.success) {
+        toast.error(
+          "Error In Adding Task",
+          res?.message || "Failed to add task"
+        );
+        return;
+      }
+
+      toast.success("Task Added", "Task added successfully");
     });
   };
 

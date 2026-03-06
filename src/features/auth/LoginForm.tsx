@@ -4,6 +4,7 @@ import ErrorMessage from "@/components/common/ErrorMessage";
 import Button from "@/components/ui/button/Button";
 import Input from "@/components/ui/input/Input";
 import { useToast } from "@/components/ui/toast/ToastContext";
+import { API_BASE_URL, API_ENDPOINT } from "@/lib/api/api.constant";
 import { ILoginForm } from "@/lib/interfaces/forms/ILoginForm.interface";
 import Validation from "@/utils/validation";
 import { useRouter } from "next/navigation";
@@ -33,25 +34,20 @@ const LoginForm = () => {
 
   const [isPending, startTransition] = useTransition();
 
-  const onSubmit = (data: ILoginForm) => {
-    startTransition(async () => {
-      const payload: ILoginForm = {
-        ...data,
-        deviceId: getOrCreateDeviceId(),
-        deviceToken: getOrCreateDeviceId(),
-      };
-      try {
-        const res = await loginAction(payload);
-        if (res.success) {
-          router.push("/dashboard");
-        }
-      } catch (error) {
-        const err = error as { message: string };
-        toast.error("Error In API", err.message);
-      }
-    });
-  };
+  const onSubmit = async (data: ILoginForm) => {
+    const payload: ILoginForm = {
+      ...data,
+      deviceId: getOrCreateDeviceId(),
+      deviceToken: getOrCreateDeviceId(),
+    };
 
+    const res = await loginAction(payload);
+
+    if (!res.success) {
+      toast.error("Error In Login", res.message);
+    }
+    router.push("/dashboard");
+  };
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 w-full">
       <button
@@ -75,6 +71,7 @@ const LoginForm = () => {
       </div>
       <div>
         <Input
+          type="password"
           label="Password"
           placeholder="*******"
           {...register("password", { ...Validation.required("Password") })}

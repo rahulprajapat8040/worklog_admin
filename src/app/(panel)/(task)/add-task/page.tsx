@@ -15,7 +15,7 @@ const status = [
 ];
 const AddTask = async () => {
   const { data: res } = await ServerApi<IAPIResponse<ICategoryList>>(
-    `${API_BASE_URL}/${API_ENDPOINT.tasks}/category?page=1&limit=20`,
+    `${API_BASE_URL}/${API_ENDPOINT.worklog}/category?page=1&limit=20`,
     { method: "GET" }
   );
 

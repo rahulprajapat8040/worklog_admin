@@ -1,6 +1,6 @@
-// src/lib/api.ts
 
 import { Method } from "@/utils/enum";
+import { FieldValues, UseFormSetError, Path } from "react-hook-form";
 
 export interface IApiErrorResponse {
   statusCode: number;
@@ -14,6 +14,10 @@ export interface ApiResult<T> {
   data: T;
   status: number;
   headers: Headers;
+}
+
+interface RefreshTokenResponse {
+  accessToken: string;
 }
 
 type AuthExcludedEndpoint =
@@ -36,7 +40,6 @@ type CallAPIOptions<D = any> = {
   cache?: RequestCache;
   redirect?: RequestRedirect;
   priority?: RequestPriority;
-  next?: { revalidate: number };
   signal?: AbortSignal;
   body?: BodyInit;
   multipart?: boolean;
@@ -85,13 +88,18 @@ export const callApi = async <T = any, D = any>(
     referrerPolicy: "strict-origin-when-cross-origin",
   };
 
-  const response = await fetchWithRetry(url.toString(), fetchOptions);
-  // ❗ important: non-OK responses are still valid fetch responses
-  if (!response.ok) {
-    await handleError(response);
-  }
+  try {
+    const response = await fetch(url.toString(), fetchOptions);
 
-  return await handleResponse<T>(response);
+    // ❗ important: non-OK responses are still valid fetch responses
+    if (!response.ok) {
+      return await handleError(response, url.toString(), fetchOptions);
+    }
+
+    return await handleResponse<T>(response);
+  } catch (error) {
+    return await handleError(error, url.toString(), fetchOptions);
+  }
 };
 
 const handleResponse = async <T>(response: Response): Promise<ApiResult<T>> => {
@@ -113,42 +121,113 @@ const handleResponse = async <T>(response: Response): Promise<ApiResult<T>> => {
   };
 };
 
-const handleError = async (response: Response): Promise<never> => {
-  let errorData: IApiErrorResponse;
-
-  try {
-    errorData = await response.json();
-  } catch {
-    throw new Error(response.statusText);
-  }
-
-  throw new ApiError(errorData);
-};
-
-async function fetchWithRetry(
+const handleError = async <T>(
+  error: unknown,
   url: string,
   config: RequestInit
-): Promise<Response> {
-  try {
-    return await fetch(url, config);
-  } catch (err) {
-    throw err;
+): Promise<ApiResult<T>> => {
+  // 🔥 already formatted error → rethrow
+  if (typeof error === "object" && error !== null && "statusCode" in error) {
+    throw error;
   }
-}
 
-// src/lib/ApiError.ts
-export class ApiError extends Error {
+  // 🌐 network error
+  if (error instanceof TypeError) {
+    throw {
+      statusCode: 0,
+      message: "Network error - failed to connect to server",
+    };
+  }
+
+  // 🌐 HTTP error
+  if (error instanceof Response) {
+    let errorData: Partial<IApiErrorResponse> = {};
+
+    try {
+      errorData = await error.json();
+    } catch {
+      errorData.message = error.statusText;
+    }
+
+    if (error.status === 401 && !isAuthExcluded(url)) {
+      if (
+        errorData.message === "INVALID_TOKEN" ||
+        errorData.message === "TOKEN_EXPIRED"
+      ) {
+        try {
+          await fetch("/api/auth/refresh-token", {
+            method: "POST",
+            credentials: "include",
+          });
+
+          const retry = await fetch(url, config);
+          if (retry.ok) {
+            return handleResponse<T>(retry);
+          }
+        } catch {
+          // logoutUser();
+        }
+      }
+    }
+    throw {
+      statusCode: error.status,
+      message: errorData.message || "Request failed",
+    };
+  }
+
+  // ❌ unknown shape
+  throw {
+    statusCode: -1,
+    message: "Unexpected error occurred",
+  };
+};
+
+// Auth exclusion check
+const isAuthExcluded = (endpoint: string): boolean => {
+  return authExcludedUrls.some((pattern) => endpoint.includes(pattern));
+};
+
+export interface ApiError {
   statusCode: number;
-  timestamp?: string;
-  path?: string;
-  error?: string;
+  message?: string;
+}
 
-  constructor(response: IApiErrorResponse) {
-    super(response.message);
-    this.name = "ApiError";
-    this.statusCode = response.statusCode;
-    this.timestamp = response.timestamp;
-    this.path = response.path;
-    this.error = response.error;
+/**
+ * Reusable error handler for forms
+ * @param err - The API error (with statusCode + message)
+ * @param setError - react-hook-form setError function
+ * @param map - Mapping of statusCodes to form fields + custom messages
+ */
+export function handleFormApiError<T extends FieldValues>(
+  err: unknown,
+  setError: UseFormSetError<T>,
+  map: Record<
+    number,
+    {
+      field: Path<T>; // which field gets the error
+      message?: string; // custom error message
+    }
+  >
+) {
+  const error = err as Partial<ApiError>;
+  const config = map[error?.statusCode ?? -1];
+
+  if (config) {
+    setError(config.field, {
+      type: "manual",
+      message: config.message || error.message || "Something went wrong",
+    });
+  } else {
+    // fallback → general error
+    setError(Object.keys(map)[0] as Path<T>, {
+      type: "manual",
+      message: error?.message || "Unexpected error occurred",
+    });
   }
 }
+
+export const ThrowError = (error: unknown, helperText = "Error in API") => {
+  const err = error as { message: string };
+  // showToastNotification("danger", err.message);
+  console.log(helperText, error);
+};

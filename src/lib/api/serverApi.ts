@@ -1,6 +1,6 @@
+import { Method } from "@/utils/enum";
 import { callApi } from "./callApi";
 import { cookies } from "next/headers";
-import { Method } from "@/utils/enum";
 
 type CallAPIOptions<D = any> = {
   method: Method;
@@ -9,7 +9,6 @@ type CallAPIOptions<D = any> = {
   redirect?: RequestRedirect;
   priority?: RequestPriority;
   signal?: AbortSignal;
-  next?: { revalidate: number };
   body?: BodyInit;
   multipart?: boolean;
 } & (
@@ -20,7 +19,6 @@ type CallAPIOptions<D = any> = {
       multipart?: boolean;
     }
 );
-
 export const ServerApi = async <T = any, D = any>(
   endpoint: string,
   options: CallAPIOptions<D>
