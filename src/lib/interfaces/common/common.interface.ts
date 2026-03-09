@@ -1,3 +1,5 @@
+import { LucideIcon } from "lucide-react";
+
 export interface IAPIResponse<T> {
   message: string;
   status: number;
@@ -7,7 +9,7 @@ export interface IAPIResponse<T> {
 
 export interface IPageInfo {
   total: number;
-  currentPage: number;
+  currentpage: number;
   totalPage: number;
   limit: number;
 }
@@ -15,4 +17,11 @@ export interface IPageInfo {
 export interface IOption {
   value: string;
   label: string;
+}
+
+
+export interface INavItems {
+  title: string
+  url: string
+  icon: LucideIcon
 }

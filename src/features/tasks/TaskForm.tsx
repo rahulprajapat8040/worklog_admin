@@ -8,6 +8,7 @@ import { ICategory } from "@/lib/interfaces/ApiResponses/category.interface";
 import { IAddTaskForm } from "@/lib/interfaces/forms/IAddTaskForm.interface";
 import { TaskStatus, Visiblity } from "@/utils/enum";
 import Validation from "@/utils/validation";
+import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 
@@ -21,6 +22,7 @@ interface TaskProp {
 }
 const TaskForm: React.FC<TaskProp> = ({ categories, taskStatus }) => {
   const toast = useToast();
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const {
     register,
@@ -53,6 +55,7 @@ const TaskForm: React.FC<TaskProp> = ({ categories, taskStatus }) => {
       }
 
       toast.success("Task Added", "Task added successfully");
+      router.push("/tasks");
     });
   };
 

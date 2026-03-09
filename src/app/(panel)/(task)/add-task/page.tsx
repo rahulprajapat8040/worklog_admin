@@ -13,12 +13,19 @@ const status = [
   { value: TaskStatus.CANCELED, label: "Canceled" },
   { value: TaskStatus.WORKING, label: "Working" },
 ];
-const AddTask = async () => {
+
+export const dynamic = "force-static";
+
+const getCategories = async () => {
   const { data: res } = await ServerApi<IAPIResponse<ICategoryList>>(
     `${API_BASE_URL}/${API_ENDPOINT.worklog}/category?page=1&limit=20`,
     { method: "GET" }
   );
 
+  return res;
+};
+const AddTask = async () => {
+  const res = await getCategories();
   return (
     <div className="py-5">
       <h1 className="text-2xl font-bold text-foreground mb-6">Add Task</h1>

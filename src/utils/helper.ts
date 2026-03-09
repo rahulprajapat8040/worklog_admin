@@ -26,3 +26,15 @@ export const statusColors: Record<TaskStatus, { class: string; text: string }> =
     CANCELED: { class: "bg-destructive/10 text-destructive", text: "Canceled" },
     WORKING: { class: "bg-destructive/10 text-destructive", text: "Working" },
   };
+
+export const GetFilterUrl = (filter: Object) => {
+  return filter
+    ? Object?.entries(filter)
+        ?.filter(([, value]) => value)
+        .map(
+          ([key, value]) =>
+            `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+        )
+        .join("&")
+    : "";
+};

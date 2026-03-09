@@ -25,14 +25,13 @@ export function proxy(req: NextRequest) {
   }
 
   const headers = new Headers(req.headers);
-  headers.set("x-current-path", pathname);
+  headers.set("x-current-path", req.url);
 
   const isPublicRoute = publicRoutes.some((route) =>
     pathname.startsWith(route)
   );
 
   const accessToken = req.cookies.get("accessToken");
-
 
   if (!accessToken && !isPublicRoute) {
     return NextResponse.redirect(new URL("/login", req.url));
