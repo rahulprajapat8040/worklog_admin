@@ -38,3 +38,79 @@ export const GetFilterUrl = (filter: Object) => {
         .join("&")
     : "";
 };
+
+export const formatMonth = (date: Date) => {
+  const months = [
+    "jan",
+    "feb",
+    "mar",
+    "apr",
+    "may",
+    "jun",
+    "jul",
+    "aug",
+    "sep",
+    "oct",
+    "nov",
+    "dec",
+  ];
+
+  return `${months[date.getMonth()]}-${date.getFullYear()}`;
+};
+
+export const formatLabel = (date: Date) => {
+  return date.toLocaleString("default", {
+    month: "long",
+    year: "numeric",
+  });
+};
+
+export const getMonthOptions = (selectedMonth: string) => {
+  const today = new Date();
+  const currentMonth = formatMonth(today);
+
+  const [mon, year] = selectedMonth.split("-");
+  const monthIndex = [
+    "jan",
+    "feb",
+    "mar",
+    "apr",
+    "may",
+    "jun",
+    "jul",
+    "aug",
+    "sep",
+    "oct",
+    "nov",
+    "dec",
+  ].indexOf(mon);
+
+  const selectedDate = new Date(Number(year), monthIndex, 1);
+
+  const months: Date[] = [];
+
+  if (selectedMonth === currentMonth) {
+    // current month -> show previous 2
+    months.push(
+      new Date(selectedDate.getFullYear(), selectedDate.getMonth() - 2)
+    );
+    months.push(
+      new Date(selectedDate.getFullYear(), selectedDate.getMonth() - 1)
+    );
+    months.push(selectedDate);
+  } else {
+    // selected month -> show prev + next
+    months.push(
+      new Date(selectedDate.getFullYear(), selectedDate.getMonth() - 1)
+    );
+    months.push(selectedDate);
+    months.push(
+      new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1)
+    );
+  }
+
+  return months.map((m) => ({
+    value: formatMonth(m),
+    label: formatLabel(m),
+  }));
+};

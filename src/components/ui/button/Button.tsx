@@ -18,8 +18,7 @@ const variantStyle: Record<ButtonVariant, string> = {
   secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
   outline:
     "border border-input bg-background hover:bg-accent font-normal hover:text-accent-foreground p-2 rounded-md",
-  ghost:
-    "border border-stroke-black p-2 rounded-lg font-semibold text-primary-blue",
+  ghost: "hover:bg-accent hover:text-accent-foreground p-2 rounded-md",
   none: "text-primary-blue",
   danger: "bg-red-500 text-white p-2 rounded-xl",
 };

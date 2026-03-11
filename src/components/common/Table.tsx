@@ -11,12 +11,12 @@ const Table = <T extends Record<string, any>>({
 }: TableProps<T>) => {
   return (
     <div
-      className={` flex flex-col w-full border border-border rounded-md justify-between bg-white ${minHeight} ${className}`}
+      className={` flex flex-col w-full border border-border rounded-md justify-between bg-background ${minHeight} ${className}`}
     >
       <div className={`w-full ${tableClassName} overflow-x-auto scrollbar`}>
-        <table className="min-w-max w-full whitespace-nowrap border-separate rounded-lg">
+        <table className="min-w-max w-full whitespace-nowrap rounded-lg">
           <thead>
-            <tr className="text-muted-foreground font-semibold *:py-3 *:px-5 rounded-lg">
+            <tr className="text-muted-foreground *:border-b *:border-[#DBDBDB59] font-semibold *:py-3 *:px-5 rounded-lg">
               {columns.map((column) => (
                 <th
                   key={column.key}
@@ -43,7 +43,7 @@ const Table = <T extends Record<string, any>>({
                 return (
                   <tr
                     key={`${index}`}
-                    className="*:px-5 *:border-y  *:border-[#DBDBDB59]"
+                    className="*:px-5 *:border-b  *:border-[#DBDBDB59]"
                   >
                     {columns.map((column, idx) => (
                       <td

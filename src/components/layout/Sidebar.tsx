@@ -3,7 +3,7 @@ import SidebarItems from "./SidebarItem";
 
 const Sidebar = async () => {
   return (
-    <aside className="hidden lg:flex flex-col w-60 min-h-screen bg-sidebar-background text-sidebar-foreground border-r border-sidebar-border">
+    <aside className="hidden lg:flex flex-col w-60 h-screen sticky top-0 bg-sidebar-background text-sidebar-foreground border-r border-sidebar-border">
       <div className="p-5 border-b border-sidebar-border">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg bg-sidebar-primary flex items-center justify-center">

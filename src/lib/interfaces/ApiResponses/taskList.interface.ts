@@ -28,3 +28,9 @@ export interface Category {
   id: string;
   colorCode: string;
 }
+
+export interface ITaskAnalytics {
+  task: number;
+  totalHours: string;
+  activeDays: number;
+}

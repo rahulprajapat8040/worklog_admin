@@ -31,7 +31,10 @@ const DropDown: React.FC<Prop> = ({ value, options, onChange }) => {
         className="flex w-full items-center justify-between border border-border rounded-md p-2"
       >
         <span>{selected?.label ?? "Select option"}</span>
-        <ChevronDown size={18} />
+        <ChevronDown
+          size={18}
+          className={`${open ? "rotate-180" : ""} transition-transform`}
+        />
       </button>
 
       {/* Dropdown */}

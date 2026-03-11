@@ -3,6 +3,7 @@
 import { API_BASE_URL, API_ENDPOINT } from "@/lib/api/api.constant";
 import { ServerApi } from "@/lib/api/serverApi";
 import { IAddTaskForm } from "@/lib/interfaces/forms/IAddTaskForm.interface";
+import { revalidateTag } from "next/cache";
 
 export const addTaskAction = async (data: IAddTaskForm) => {
   try {
@@ -14,6 +15,7 @@ export const addTaskAction = async (data: IAddTaskForm) => {
     });
 
     if (res.success) {
+      revalidateTag("tasks", "default");
       return { success: true };
     }
 

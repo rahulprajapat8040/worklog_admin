@@ -10,7 +10,7 @@ const StatusText: React.FC<Props> = ({ text, color, className }) => {
         color: color,
         backgroundColor: `${color}1A`, // ~10% opacity
       }}
-      className={`px-2 rounded-full py-1 text-sm capitalize ${className}`}
+      className={`px-2 rounded-full py-1 text-xs capitalize ${className}`}
     >
       {text}
     </span>

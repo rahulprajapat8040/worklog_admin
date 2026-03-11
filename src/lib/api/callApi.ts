@@ -1,4 +1,3 @@
-
 import { Method } from "@/utils/enum";
 import { FieldValues, UseFormSetError, Path } from "react-hook-form";
 
@@ -42,6 +41,7 @@ type CallAPIOptions<D = any> = {
   priority?: RequestPriority;
   signal?: AbortSignal;
   body?: BodyInit;
+  next?: { revalidate: number; tags?: string[] };
   multipart?: boolean;
 } & (
   | { method: "GET" | "HEAD"; data?: Record<string, any> }
