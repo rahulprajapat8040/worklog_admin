@@ -1,4 +1,4 @@
-DATE: 11 MARCH 2026
-Description: analytics card created, analytics page added, comparision server side chart
-created, analytics api for user insights added
+DATE: 12 MARCH 2026
+Description: added pie chart component with e-charts and category chart 
+api added
 Author: Rahul Prajapat

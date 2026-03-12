@@ -101,7 +101,7 @@ const ComparisonChart: React.FC<Props> = ({ data }) => {
           {data.map((d, index) => (
             <div
               key={index}
-              className="absolute top-0"
+              className="absolute top-0 group"
               style={{
                 left: `${xScale(d.key)}%`,
                 width: `${xScale.bandwidth()}%`,
@@ -113,11 +113,6 @@ const ComparisonChart: React.FC<Props> = ({ data }) => {
                 const barWidth =
                   (150 - PX_BETWEEN_BARS * (numBars - 1)) / numBars;
                 const barXPosition = barIndex * (barWidth + PX_BETWEEN_BARS);
-                // const formatHours = (decimal: number) => {
-                //   const hours = Math.floor(decimal);
-                //   const minutes = Math.round((decimal - hours) * 60);
-                //   return `${hours}h ${minutes}m`;
-                // };
 
                 return (
                   <div
@@ -130,20 +125,24 @@ const ComparisonChart: React.FC<Props> = ({ data }) => {
                     }}
                   >
                     <div
-                      className="w-full h-full rounded-t"
+                      className="w-full h-full rounded-t transition-opacity group-hover:opacity-100 opacity-80"
                       style={{
                         backgroundColor: colors[barIndex % colors.length],
                         border: `1px solid #a07dff22`,
                       }}
                     />
-
-                    {/* Tooltip */}
-                    <ToolTip
-                      text={`${d.key} • ${(d.values[0], d.values[1])} hrs`}
-                    />
                   </div>
                 );
               })}
+
+              {/* Tooltip */}
+              <ToolTip>
+                <div className="flex gap-2">
+                  <span>{d.key}:</span>
+                  <span className="text-purple-300">{d.values[0]} hrs</span>
+                  <span className="text-gray-300">{d.values[1]} hrs</span>
+                </div>
+              </ToolTip>
             </div>
           ))}
           {/* X Axis (Labels) */}
